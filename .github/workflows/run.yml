@@ -7,11 +7,6 @@ on:
   schedule:
     - cron: "30 1 * * *"
   workflow_dispatch:
-    inputs:
-      crawl_date:
-        description: '指定抓取日期 (格式: YYYY-MM-DD, 留空则抓取今天)'
-        required: false
-        default: ''
 
 
 jobs:
@@ -28,17 +23,9 @@ jobs:
         
     - name: Crawl arXiv papers
       id: crawl_step
-      env:
-        INPUT_DATE: ${{ inputs.crawl_date }}
       run: |
         source .venv/bin/activate
-        if [ -n "$INPUT_DATE" ]; then
-          echo "检测到手动指定日期: $INPUT_DATE"
-          today="$INPUT_DATE"
-        else
-          echo "未指定日期，使用今日 UTC 时间"
-          today=$(date -u "+%Y-%m-%d")
-        fi
+        today=$(date -u "+%Y-%m-%d")
         echo "开始爬取 $today 的arXiv论文... / Starting to crawl $today arXiv papers..."
         
         # 检查今日文件是否已存在，如存在则删除 / Check if today's file exists, delete if found
